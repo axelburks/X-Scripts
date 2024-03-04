@@ -33,7 +33,7 @@ cron "0 8,14,20 * * *" script-path=https://raw.githubusercontent.com/Yuheng0101/
 ```
 ### 配置 (Surge)
 ```properties
-最新技術推送 = type=cron,cronexp=0 0 8,14,20 * * *,wake-system=1,script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/1024.js,timeout=60
+最新技術推送 = type=cron,cronexp= 0 8,14,20 * * *,wake-system=1,script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/1024.js,timeout=60
 ```
 ## BoxJs地址
     https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/boxjs.json
