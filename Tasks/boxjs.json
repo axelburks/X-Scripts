@@ -16,7 +16,7 @@
         "<p style='margin-left:20px;color:#ff0000;font-weight:900;font-size:30px;'>不懂请不要乱动! </p>"
       ],
       "keys": [
-        "moyu_show_lunar",
+        "moyu_show_another_date",
         "moyu_show_almanac",
         "moyu_custom_notify_img",
         "moyu_remind_days",
@@ -24,8 +24,8 @@
       ],
       "settings": [
         {
-          "id": "moyu_show_lunar",
-          "name": "当传入日期为阳历时, 是否展示农历",
+          "id": "moyu_show_another_date",
+          "name": "当传入日期为阳历时, 是否展示农历, 当传入阴历时, 是否展示阳历",
           "val": false,
           "type": "boolean",
           "desc": "比如老婆生日:3月15日, 如果勾选, 通知时会带上距离农历还有xx天"
@@ -513,6 +513,104 @@
         "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/05/b9/57/05b9577c-3773-cd2b-5a99-49c0dc3f331d/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/144x144.png"
       ],
       "script": "https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/Bdyy/bdyy.js"
+    },
+    {
+      "id": "yuheng.huluwa",
+      "name": "葫芦娃预约",
+      "descs_html": [
+        "<p style='margin-left:20px;margin-top:20px;'>多账号配置参考:手机号1:ck1&手机号2:ck2...</p>"
+      ],
+      "keys": [
+        "huluwa_split",
+        "xlth_cookies",
+        "glyp_cookies",
+        "kglg_cookies",
+        "hlqg_cookies",
+        "zhcs_cookies",
+        "gyqp_cookies",
+        "llsc_cookies",
+        "ylqx_cookies"
+      ],
+      "settings": [
+        {
+          "id": "huluwa_split",
+          "name": "多账号分隔符",
+          "val": "&",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "xlth_cookies",
+          "name": "新联惠购",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "glyp_cookies",
+          "name": "贵旅优品",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "kglg_cookies",
+          "name": "空港乐购",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "hlqg_cookies",
+          "name": "航旅黔购",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "zhcs_cookies",
+          "name": "遵航出山",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "gyqp_cookies",
+          "name": "贵盐黔品",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "llsc_cookies",
+          "name": "乐旅商城",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "ylqx_cookies",
+          "name": "驿路黔寻",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        }
+      ],
+      "author": "@yuheng",
+      "repo": "https://github.com/Yuheng0101/X",
+      "icons": [
+        "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/70/a4/56/70a456c9-4df9-3bdb-03b6-ecf99f13e7c1/AppIcon-1x_U007epad-0-10-0-85-220.png/144x144bb.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/70/a4/56/70a456c9-4df9-3bdb-03b6-ecf99f13e7c1/AppIcon-1x_U007epad-0-10-0-85-220.png/144x144bb.png"
+      ],
+      "script": ""
     }
   ]
 }
