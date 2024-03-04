@@ -2,9 +2,14 @@
  * @name 摸鱼来啦~
  * @channel https://t.me/yqc_123
  * @feedback https://t.me/yqc_777
- * @version 1.1.5
+ * @version 1.1.8
 ******************************************
 ## 更新日志
+
+### 20240304
+    修复Loon/iOS16上不通知的问题
+    传入日期时可选择是否显示另外的阳历/阴历倒计时
+    修改部分节日的过节祝福语
 
 ### 20240229
     优化排版
@@ -77,18 +82,19 @@ const Today = Now.getDate()
 const Hour = Now.getHours()
 // ----------------------------------
 // 配置项
-// 如果只传入阳历, 是否展示农历日期
-$.SHOW_LUNAR = $.isTrue($.isNode() ? process.env.MOYU_SHOW_LUNAR : $.getdata('moyu_show_lunar'))
+// 如果只传入某一日期, 是否需要显示另外一个日期
+$.SHOW_ANOTHER_DATE = $.isTrue($.isNode() ? process.env.MOYU_SHOW_ANOTHER_DATE : $.getdata('moyu_show_another_date'))
+// $.SHOW_LUNAR = $.isTrue($.isNode() ? process.env.MOYU_SHOW_LUNAR : $.getdata('moyu_show_lunar'))
 // 是否需要显示黄历
 $.SHOW_ALMANAC = $.isTrue($.isNode() ? process.env.MOYU_SHOW_ALMANAC : $.getdata('moyu_show_almanac'))
 // 用户自定义通知图片
 $.CUSTOM_NOTIFY_IMG = ($.isNode() ? process.env.MOYU_CUSTOM_NOTIFY_IMG : $.getdata('moyu_custom_notify_img')) || ''
 // 剩余多少天开始提醒
-$.REMIND_DAYS = ($.isNode() ? process.env.MOYU_REMIND_DAYS : $.getdata('moyu_remind_days')) || 100
+$.REMIND_DAYS = ($.isNode() ? process.env.MOYU_REMIND_DAYS : $.getdata('moyu_remind_days')) || 365
 // 自定义规范: <节日1>&<节日2>&节日名称:(YYYY年)?MM月DD日($农历)($阳历)?&...
 $.FESTIVAL_CONF =
     ($.isNode() ? process.env.MOYU_FESTIVAL_CONF : $.getdata('moyu_festival_conf')) ||
-    '<元宵节>&<清明节>&<劳动节>&<端午节>&<中秋节>&<国庆节>&<元旦>&<春节>'
+    '<元宵节>&<清明节>&<劳动节>&<端午节>&<中秋节>&<国庆节>&<元旦>&<春节>&老婆生日:5月6日$阳历&AA生日:02月29日$阳历&BB生日:3月21日$农历'
 // ----------------------------------
 // 摸鱼图片@薛定谔的大灰机
 const images = [
@@ -148,11 +154,16 @@ const festivalList = $.FESTIVAL_CONF.split('&')
             let [name, date] = it.split(':')
             const hasLunar = date.includes('$农历')
             const hasSolar = date.includes('$阳历')
-            // 不包含默认农历阳历都输出
-            if ((!hasLunar && !hasSolar) || (hasSolar && !hasLunar)) {
+            // 不包含任意或只包含阳历默认农历阳历都输出
+            if (!hasLunar && !hasSolar) {
+                date = getDateStr(date, Year)
+                const [y, m, d] = date.split('/').map(Number)
+                return { name, date, lunar: Lunar2Solar(y, m, d), diff: getDiffDays(date), userIpt: '' }
+            }
+            if (hasSolar && !hasLunar) {
                 date = getDateStr(date.replace('$阳历', ''), Year)
                 const [y, m, d] = date.split('/').map(Number)
-                return { name, date, lunar: Lunar2Solar(y, m, d), diff: getDiffDays(date) }
+                return { name, date, lunar: Lunar2Solar(y, m, d), diff: getDiffDays(date), userIpt: 'solar' }
             }
             // 只包含农历的只输出农历
             if (hasLunar && !hasSolar) {
@@ -160,7 +171,7 @@ const festivalList = $.FESTIVAL_CONF.split('&')
                 const [y, m, d] = date.split('/').map(Number)
                 const lunar = Lunar2Solar(y, m, d)
                 const diff = getDiffDays(lunar)
-                return { name, date: lunar, diff }
+                return { name, date, lunar, diff, userIpt: 'lunar' }
             }
             // 两者都包含的, 先判断哪个在前, 传入的日期为哪个，如果传入的是阳历, 则都输出, 如果传入的是农历, 则只输出农历
             if (hasLunar && hasSolar) {
@@ -169,14 +180,13 @@ const festivalList = $.FESTIVAL_CONF.split('&')
                 date = getDateStr(date.replace(reg, ''), Year)
                 const [y, m, d] = date.split('/').map(Number)
                 const lunar = Lunar2Solar(y, m, d)
-                return { name, date: isSolar ? date : lunar, lunar, diff: getDiffDays(isSolar ? date : lunar) }
+                return { name, date: isSolar ? date : lunar, lunar, diff: getDiffDays(isSolar ? date : lunar), userIpt: isSolar ? 'solar' : 'lunar' }
             }
         }
     })
 
     .filter((it) => it.diff >= 0)
     .sort((a, b) => a.diff - b.diff)
-
 // ----------------------------------
 /**
  * 每日一言
@@ -205,17 +215,57 @@ const notify = async () => {
     const subTitle = `${timeFrame}好, 摸鱼人, ${todayOneWord ? `${todayOneWord}` : '生活不止眼前的苟且, 还有摸鱼的快乐~'}`
     // 周末提醒
     const weekendDays = getWeekendDays()
-    let content = weekendDays === 0 ? `🎉周末快乐, ${(await getOneWord()) || `记得多陪陪家人哦~`}` : `距离周末还有${weekendDays}天, ${MOYU_COPY_WRITE[getWeekDay()]}`
+    let content =
+        weekendDays === 0
+            ? `🎉周末快乐, ${(await getOneWord()) || `记得多陪陪家人哦~`}`
+            : `${weekendDays == 1 ? `今天是周五哦` : `距离周末还有${weekendDays}天`}, ${MOYU_COPY_WRITE[getWeekDay()]}`
     // 节日提醒
-    for (let { name: festival, date, diff: diffDays, lunar } of festivalList) {
-        if (diffDays === 0) {
-            const bless = await getOneWord()
-            content += `\n🎉${festival}快乐${bless ? ', ' + bless : '!'}`
-            $.SHOW_LUNAR && lunar && (content += `\n距离农历(${lunar})还有${getDiffDays(lunar)}天`)
-        } else if (diffDays > 0 && diffDays <= $.REMIND_DAYS) {
-            content += `\n距离${festival}还有${diffDays}天${$.SHOW_LUNAR && lunar ? `, 农历还有${getDiffDays(lunar)}天` : ''}`
-        } else {
-            console.log(`距离${festival}还有${diffDays}天, 不在范围内, 已跳过`)
+    for (let { name: festival, date, diff, lunar, userIpt } of festivalList) {
+        if (diff === 0) {
+            switch (festival) {
+                case '清明节':
+                    content += `\n🕯️清明节到了, 抛却无尽的忧伤, 迎接幸福的曙光`
+                    break
+                case '端午节':
+                    content += `\n🐲端午节到了, 清香的叶子层层叠叠, 薪酬总涨不跌`
+                    break
+                case '中秋节':
+                    content += `\n🥮中秋节倒了, 月圆家圆人圆事圆圆圆团团, 国和家和人和事和和和美美`
+                    break
+                case '春节':
+                    content += `\n🧨时光荏苒, 岁月如梭, 又是一年春节`
+                    break
+                default:
+                    const bless = await getOneWord()
+                    content += `\n🎉${festival}快乐${bless ? ', ' + bless : '!'}`
+                    if (userIpt === '' || userIpt === 'solar') {
+                        // 取阳历
+                        content += `\n${$.SHOW_ANOTHER_DATE && lunar ? `距离${festival}农历(${lunar})还有${getDiffDays(lunar)}天` : ''}`
+                    } else {
+                        // 取农历
+                        // 阳历比农历先过, 所以这里不做处理
+                    }
+                    break
+            }
+        } else if (diff > 0 && diff <= $.REMIND_DAYS) {
+            // console.log(`${festival}的输入日期类型是${typeof userIpt === 'undefined' ? '自动选择' : userIpt === 'lunar' ? '农历' : '阳历'}`)
+            if (userIpt === 'lunar') {
+                // 取阳历判断是否需要显示
+                content += `\n距离${festival}还有${diff}天`
+                if ($.SHOW_ANOTHER_DATE) {
+                    const dateDiff = getDiffDays(date)
+                    if (dateDiff === 0) {
+                        content += `, 今天是${festival}, 请注意哦~`
+                    } else if (dateDiff > 0) {
+                        content += `, 阳历(${date})还有${dateDiff}天`
+                    } else {
+                        console.log(`${festival}阳历${date}已过, 不在范围内, 已跳过`)
+                    }
+                }
+            } else {
+                // 取农历判断是否需要显示
+                content += `\n距离${festival}还有${diff}天${$.SHOW_ANOTHER_DATE && lunar ? `, 农历(${lunar})还有${getDiffDays(lunar)}天` : ''}`
+            }
         }
     }
     // 黄历
@@ -228,9 +278,8 @@ const notify = async () => {
         content += `\n【节】${detail}`
     }
     // 发送通知
-    await SendNotify(title, subTitle, content, {
-        'media-url': $.CUSTOM_NOTIFY_IMG || images[Math.floor(Math.random() * images.length)]
-    })
+    const imageUrl = $.CUSTOM_NOTIFY_IMG || images[Math.floor(Math.random() * images.length)]
+    await SendNotify(title, subTitle, content, imageUrl)
 }
 /** 阴历转阳历 */
 function Lunar2Solar(year, month, day) {
@@ -446,7 +495,8 @@ async function SendNotify(title, subtitle = '', content = '', options = {}) {
         const opts = {}
         if (openURL) opts['openUrl'] = openURL
         if (mediaURL) opts['mediaUrl'] = mediaURL
-        if (JSON.stringify(opts) === '{}') {
+        const iOS_Version = $loon.split(' ')[1].split('.')[0]
+        if (JSON.stringify(opts) === '{}' || Number(iOS_Version) === 16) {
             $notification.post(title, subtitle, content)
         } else {
             $notification.post(title, subtitle, content, opts)
