@@ -83,7 +83,6 @@
         "<p style='margin-left:10px;margin-top:20px;color:#3498db;'>区间举例: 1000-2000&1500-2000&...(注意长度与账密保持一致, 步数亦是如此)</p>",
         "<p style='margin-left:10px;margin-top:20px;font-size:16px;color:#ff0000;'>步数优先级高于区间, 填写步数后区间作用将失效, 建议填写区间</p>",
         "<p style='margin-left:10px;margin-top:20px;font-size:16px;color:#ff0000;'>步数不要超过50000</p>"
-
       ],
       "keys": [
         "xiaomi_step_debug",
@@ -145,45 +144,70 @@
       "id": "yuheng.imaotai",
       "name": "i茅台预约",
       "descs_html": [
-        "<p style='color:#ff0000;font-size:18px;font-weight:900;text-align:center;margin-top:20px;'>脚本已删, 无需再问</p>"
+        "<p style='margin-left:20px;margin-top:20px;color:#f1c40f;'>已适配多账号, 多参数使用&进行隔开, 或自定义</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ff0000;'>请注意如果不配置,默认选择填写的作为预约参数,如你抓取2个或多个账号,实则下方参数只配置了一个,所有账号都按此配置进行预约</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(是否选择投放量最大门店): true&false</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(是否开启茅运[茅运不足100请填false]): true&false</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(省份配置): 贵州省&浙江省&...</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(城市配置): 贵阳市&温州市&...</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(预约项配置): 10941,10942&10941&...</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(详细地址): 贵阳市南明区花果园&xxxxx&...</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ecf0f1;'>如(经纬度): 106.713478,26.573743&xxxxx&...</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#ff0000;'>账号配置请与ck长度保持一致, 亦或只填写一个</p>",
+        "<p style='margin-left:20px;margin-top:20px;color:#9b59b6;'>多说一句,经纬度你知道就填,不知道只填详细地址就好,经纬度优先级高于地址,如果填写经纬度,详细地址的作用将失效</p>"
       ],
       "keys": [
+        "imaotai_split",
         "imaotai_params",
+        "imaotai__config__islarge",
         "imaotai__config__istravel",
         "imaotai__config__province",
         "imaotai__config__city",
         "imaotai__config__itemcode",
         "imaotai__config__address",
-        "imaotai__config__location",
-        "imaotai__config__shopid"
+        "imaotai__config__location"
       ],
       "settings": [
         {
+          "id": "imaotai_split",
+          "name": "多账号分隔符, 默认即可",
+          "val": "&",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "imaotai__config__islarge",
+          "name": "预约方式, 最大投放量[true], 最近[false], 默认false",
+          "val": "false",
+          "type": "text",
+          "desc": ""
+        },
+        {
           "id": "imaotai__config__istravel",
-          "name": "是否开启茅运旅行",
-          "val": false,
-          "type": "boolean",
+          "name": "是否开启茅运旅行, 开启[true], 关闭[false], 默认false",
+          "val": "false",
+          "type": "text",
           "desc": ""
         },
         {
           "id": "imaotai__config__province",
-          "name": "省份名称",
+          "name": "*省份名称, 如: 贵州省",
           "val": null,
           "type": "text",
           "rows": 1,
-          "desc": "必填, 例如: 山东省"
+          "desc": "必填"
         },
         {
           "id": "imaotai__config__city",
-          "name": "城市名称",
+          "name": "*城市名称, 如: 贵阳市",
           "val": null,
           "type": "text",
           "rows": 1,
-          "desc": "必填, 例如: 济南市"
+          "desc": "必填"
         },
         {
           "id": "imaotai__config__itemcode",
-          "name": "预约项",
+          "name": "*预约项",
           "val": "10941,10942",
           "type": "text",
           "rows": 1,
@@ -191,7 +215,7 @@
         },
         {
           "id": "imaotai__config__address",
-          "name": "当前位置",
+          "name": "当前位置(与经纬度二选一, 建议填写地址)",
           "val": null,
           "type": "text",
           "rows": 1,
@@ -204,14 +228,6 @@
           "type": "text",
           "rows": 1,
           "desc": "注意经度在前, 纬度在后, 例如: 117.119999,36.651216,不填根据当前位置获取"
-        },
-        {
-          "id": "imaotai__config__shopid",
-          "name": "(选填)需要预约的店铺id",
-          "val": null,
-          "type": "text",
-          "rows": 1,
-          "desc": "默认选择最近店铺"
         }
       ],
       "author": "@yuheng",
@@ -465,7 +481,7 @@
       "descs_html": [
         "<a target='_blank' href='https://github.com/Yuheng0101/X/tree/main/Tasks/eshop'>【README.md】</a>"
       ],
-      "keys": ["eshop_followedList","eshop_isClear"],
+      "keys": ["eshop_followedList", "eshop_isClear"],
       "settings": [
         {
           "id": "eshop_followedList",
