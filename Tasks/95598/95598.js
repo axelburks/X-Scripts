@@ -77,8 +77,8 @@ var panelParams = []
         await getElcFee(i)
         // 近7天用电量
         if (recentElcFee.toString() === 'true') await getRecentElcFee(i)
-        // 每月15号查询上个月用电量（超前查不到上月账单）
-        if (day === '15') await getLastMonthElcFee(i)
+        // 每月15号查询上个月用电量（超前查不到上月账单） => 临时先去掉
+        // if (day === '15') await getLastMonthElcFee(i)
         // 通知
         await SendNotify(`网上国网`, subTitle, Message)
         // 清空通知信息
