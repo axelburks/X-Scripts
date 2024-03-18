@@ -71,8 +71,8 @@ const WSGW_CONFIG = {
     accountType: '02',
     channelCode: '3369'
 }
+// 是否开启调试模式
 const WSGW_DEBUG = $.isTrue($.isNode() ? process.env.WSGW_DEBUG : $.getdata('wsgw_debug')) 
-console.log(`DEBUG: ${WSGW_DEBUG}`)
 // openid => 用户唯一标识
 var WSGW_OPENID = ($.isNode() ? process.env.WSGW_OPENID : $.getdata('wsgw_openid')) || ''
 // token => 接口请求凭证
