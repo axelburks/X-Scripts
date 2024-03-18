@@ -108,12 +108,15 @@ var WSGW_AUTH = ($.isNode() ? process.env.WSGW_AUTH : $.getdata('wsgw_auth')) ||
             const {
                 PROVINCE_CODE, // 省份编码
                 AVALIABLE_BALANCE, // 电费余额, 单位: 分
+                BALANCE, // 余额, 单位: 分
                 POWER_USER_NAME, // 用电户名
                 POWER_COMPANY_SHOW_NAME, // 供电公司
                 POWER_COMPANY_NM, // 供电公司编码
                 POWER_USER_ADDR, // 用电地址
                 POWER_USER_ID // 用电户号
             } = arrearsList[i]
+            // 这里部分用户余额是AVALIABLE_BALANCE，另一部分是BALANCE
+            const balance = +(AVALIABLE_BALANCE == '0' ? BALANCE : AVALIABLE_BALANCE) / 100
             // ----------------------------------------------
             const electricityUsage = await wsgw.getElectricityUsage(POWER_USER_ID, PROVINCE_CODE) // ✔
             const {
@@ -124,7 +127,7 @@ var WSGW_AUTH = ($.isNode() ? process.env.WSGW_AUTH : $.getdata('wsgw_auth')) ||
                 levelAccuPq // 累计用电量
             } = electricityUsage
             $.message.push(`本月用电: ${totalPq}(千瓦时) | 本期电费: ${totalAmount}(元)`)
-            $.message.push(`账户余额: ${AVALIABLE_BALANCE / 100}(元) | 累计用电: ${levelAccuPq}(千瓦时)`)
+            $.message.push(`账户余额: ${balance}(元) | 累计用电: ${levelAccuPq}(千瓦时)`)
             $.message.push(`户主信息: ${POWER_USER_NAME}(${POWER_USER_ID})`)
             $.message.push(`供电公司: ${POWER_COMPANY_SHOW_NAME}`) // (${POWER_COMPANY_NM})
             $.message.push(`用电地址: ${POWER_USER_ADDR}`)
