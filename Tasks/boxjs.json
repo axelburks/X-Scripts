@@ -239,57 +239,53 @@
       "script": ""
     },
     {
-      "id": "yuheng.95598",
+      "id": "yuheng.wsgw",
       "name": "网上国网",
       "descs_html": [
-        "<a target='_blank' href='https://github.com/Yuheng0101/X/tree/main/Tasks/95598'>README.md</a>"
+        "<a style='margin-left:20px;color:#686de0;' target='_blank' href='https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/95598/95598.js'>README.md👈相关配置请点击</a>",
+        "<p style='margin-top:20px;margin-left:20px;color:#eb4d4b;'>本脚本仅提供查询服务, 不牵扯签到相关</p>",
+        "<p style='margin-left:20px;color:#ff7979;'>1.微信小程序搜索 网上国网 ,打开并登录(请提前绑定户号)</p>",
+        "<p style='margin-left:20px;color:#60a3bc;'>2.代理工具添加重写和Cron脚本</p>",
+        "<p style='margin-left:20px;color:#f0932b;'>3.回到小程序重新进入, 提示获取数据成功即可使用该脚本</p>",
+        "<p style='margin-left:20px;color:#38ada9;'>4.回到代理工具执行Cron脚本, 即可查看相关结果</p>"
       ],
       "keys": [
-        "95598_username",
-        "95598_password",
-        "95598_recent_elc_fee",
-        "95598_surge_panel_config",
-        "95598_bizrt",
-        "95598_bindInfo"
+        "wsgw_debug",
+        "wsgw_openid",
+        "wsgw_token",
+        "wsgw_auth"
       ],
       "settings": [
         {
-          "id": "95598_username",
-          "name": "账号",
-          "val": null,
-          "type": "text",
-          "rows": 1,
-          "desc": "手机号"
-        },
-        {
-          "id": "95598_password",
-          "name": "密码",
-          "val": null,
-          "type": "text",
-          "rows": 1,
-          "desc": ""
-        },
-        {
-          "id": "95598_recent_elc_fee",
-          "name": "是否查看近期用电量",
-          "val": false,
+          "id": "wsgw_debug",
+          "name": "是否查看数据日志",
+          "val": "false",
           "type": "boolean",
           "desc": ""
         },
         {
-          "id": "95598_notify_type",
-          "name": "通知方式 0/默认 1/全通知",
-          "val": "1",
+          "id": "wsgw_openid",
+          "name": "用户标识",
+          "val": null,
           "type": "text",
-          "desc": "指定单/多户通知"
+          "rows": 1,
+          "desc": ""
         },
         {
-          "id": "95598_surge_panel_config",
-          "name": "Surge Panel配置",
-          "val": "{'title':'','content':'','icon':'','icon-color':''}",
+          "id": "wsgw_token",
+          "name": "用户凭证",
+          "val": null,
           "type": "text",
-          "rows": 10,
-          "desc": "使用方式请看README.md"
+          "rows": 1,
+          "desc": ""
+        },
+        {
+          "id": "wsgw_auth",
+          "name": "登录凭证",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
         }
       ],
       "author": "@yuheng",
