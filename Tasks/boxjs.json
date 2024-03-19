@@ -245,9 +245,10 @@
         "<a target='_blank' href='https://github.com/Yuheng0101/X/tree/main/Tasks/95598'>README.md</a>"
       ],
       "keys": [
+        "95598_recent_elc_fee",
+        "95598_notify_type",
         "95598_username",
         "95598_password",
-        "95598_recent_elc_fee",
         "95598_bizrt",
         "95598_bindInfo"
       ],
@@ -293,9 +294,9 @@
     },
     {
       "id": "yuheng.wsgw",
-      "name": "网上国网",
+      "name": "网上国网小程序",
       "descs_html": [
-        "<a style='margin-left:20px;color:#686de0;' target='_blank' href='https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/95598/95598.js'>README.md👈相关配置请点击</a>",
+        "<a style='margin-left:20px;color:#686de0;' target='_blank' href='https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/95598/95598.weapp.js'>README.md👈相关配置请点击</a>",
         "<p style='margin-top:20px;margin-left:20px;color:#eb4d4b;'>本脚本仅提供查询服务, 不牵扯签到相关</p>",
         "<p style='margin-left:20px;color:#ff7979;'>1.微信小程序搜索 网上国网 ,打开并登录(请提前绑定户号)</p>",
         "<p style='margin-left:20px;color:#60a3bc;'>2.代理工具添加重写和Cron脚本</p>",
@@ -347,7 +348,7 @@
         "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/83/d8/8a/83d88a92-5a4d-7a2f-118c-80d795e7a9f6/AppIcon-0-0-1x_U007emarketing-0-5-0-0-sRGB-85-220.png/144x144.png",
         "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/83/d8/8a/83d88a92-5a4d-7a2f-118c-80d795e7a9f6/AppIcon-0-0-1x_U007emarketing-0-5-0-0-sRGB-85-220.png/144x144.png"
       ],
-      "script": "https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/95598/95598.js"
+      "script": "https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/95598/95598.weapp.js"
     },
     {
       "id": "yuheng.1024",
