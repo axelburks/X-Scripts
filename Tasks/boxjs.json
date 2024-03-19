@@ -245,6 +245,7 @@
         "<a target='_blank' href='https://github.com/Yuheng0101/X/tree/main/Tasks/95598'>README.md</a>"
       ],
       "keys": [
+        "95598_log_debug",
         "95598_recent_elc_fee",
         "95598_notify_type",
         "95598_username",
@@ -253,6 +254,13 @@
         "95598_bindInfo"
       ],
       "settings": [
+        {
+          "id": "95598_log_debug",
+          "name": "是否输出日志",
+          "val": false,
+          "type": "boolean",
+          "desc": ""
+        },
         {
           "id": "95598_recent_elc_fee",
           "name": "是否查看近期用电量",
@@ -303,12 +311,7 @@
         "<p style='margin-left:20px;color:#f0932b;'>3.回到小程序重新进入, 提示获取数据成功即可使用该脚本</p>",
         "<p style='margin-left:20px;color:#38ada9;'>4.回到代理工具执行Cron脚本, 即可查看相关结果</p>"
       ],
-      "keys": [
-        "wsgw_debug",
-        "wsgw_openid",
-        "wsgw_token",
-        "wsgw_auth"
-      ],
+      "keys": ["wsgw_debug", "wsgw_openid", "wsgw_token", "wsgw_auth"],
       "settings": [
         {
           "id": "wsgw_debug",
@@ -675,6 +678,69 @@
       "icons": [
         "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/70/a4/56/70a456c9-4df9-3bdb-03b6-ecf99f13e7c1/AppIcon-1x_U007epad-0-10-0-85-220.png/144x144bb.png",
         "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/70/a4/56/70a456c9-4df9-3bdb-03b6-ecf99f13e7c1/AppIcon-1x_U007epad-0-10-0-85-220.png/144x144bb.png"
+      ],
+      "script": ""
+    },
+    {
+      "id": "yuheng.cache",
+      "name": "第三方库缓存查看",
+      "descs_html": [
+        "<p style='margin-left:20px;margin-top:20px;'>查看依赖包, 无需操作</p>"
+      ],
+      "keys": [
+        "CryptoJS.js",
+        "JSEncrypt.js",
+        "cheerio.js",
+        "Buffer.js",
+        "xmldom.js"
+      ],
+      "settings": [
+        {
+          "id": "CryptoJS.js",
+          "name": "CryptoJS",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "JSEncrypt.js",
+          "name": "JSEncrypt",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "cheerio.js",
+          "name": "cheerio",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "Buffer.js",
+          "name": "Buffer",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        },
+        {
+          "id": "xmldom.js",
+          "name": "xmldom(DOMParser)",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
+        }
+      ],
+      "author": "@yuheng",
+      "repo": "https://github.com/Yuheng0101/X",
+      "icons": [
+        "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0d/31/0b/0d310b25-aa91-99c5-b23b-af1e8753c4d0/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/144x144.png",
+        "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0d/31/0b/0d310b25-aa91-99c5-b23b-af1e8753c4d0/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/144x144.png"
       ],
       "script": ""
     }
