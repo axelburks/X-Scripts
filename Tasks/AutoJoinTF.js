@@ -14,7 +14,7 @@
 hostname = testflight.apple.com
 
 [rewrite_local]
-^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*\/apps|join\/[A-Za-z0-9]+)$ url script-request-header https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js
+^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*(?!\/accept)|join\/[A-Za-z0-9]+) url script-request-header https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js
 
 [task_local]
 0/5 * * * * * https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js, tag=TF监控自动加入, img-url=https://raw.githubusercontent.com/githubdulong/Script/master/Images/testflight.png, enabled=true
@@ -24,7 +24,7 @@ Loon配置:
 hostname = testflight.apple.com
 
 [Script]
-http-request ^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*\/apps|join\/[A-Za-z0-9]+)$ tag=TF获取参数, script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js
+http-request ^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*(?!\/accept)|join\/[A-Za-z0-9]+) tag=TF获取参数, script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js
 cron "0/5 * * * * *" script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js, timeout=10, tag=TF监控自动加入, img-url=https://raw.githubusercontent.com/githubdulong/Script/master/Images/testflight.png
 ******************************************
 Surge配置:
@@ -32,7 +32,7 @@ Surge配置:
 hostname = testflight.apple.com
 
 [Script]
-TF获取参数 = type=http-request,pattern=^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*\/apps|join\/[A-Za-z0-9]+)$,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js,script-update-interval=0
+TF获取参数 = type=http-request,pattern=^https:\/\/testflight\.apple\.com\/(v3\/accounts\/.*(?!\/accept)|join\/[A-Za-z0-9]+),requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js,script-update-interval=0
 TF监控自动加入 = type=cron,cronexp="0/5 * * * * *",wake-system=1,script-path=https://raw.githubusercontent.com/Yuheng0101/X/main/Tasks/AutoJoinTF.js,timeout=60
 ******************************************/
 const $ = new Env('𝐓𝐞𝐬𝐭𝐅𝐥𝐢𝐠𝐡𝐭自动加入')
@@ -63,6 +63,17 @@ const inArray = (value, array = APP_IDS, separator = '#') => array.findIndex((it
 // 获取参数
 const getParams = () => {
     const { url, headers: header } = $request
+    const handler = (appId) => {
+        const status = '0' // 0: 未加入| 1: 已加入
+        const CACHE_APP_ID = `${appId}#${status}`
+        if (!APP_IDS.includes(CACHE_APP_ID)) {
+            APP_IDS.push(CACHE_APP_ID)
+            $.setdata(APP_IDS.join(','), 'tf_app_ids')
+            $.msg($.name, '应用参数获取成功', `已捕获并存储应用ID: ${appId}`)
+        } else {
+            $.msg($.name, '', `应用ID: ${appId} 已存在，无需重复添加。`)
+        }
+    }
     // 打开TF APP抓取的信息参数
     if (/^https:\/\/testflight\.apple\.com\/v3\/accounts\/.*\/apps$/.test(url)) {
         const headers = Object.fromEntries(Object.entries(header).map(([key, value]) => [key.toLowerCase(), value]))
@@ -82,18 +93,14 @@ const getParams = () => {
         const appIdMatch = url.match(/^https:\/\/testflight\.apple\.com\/join\/([A-Za-z0-9]+)$/)
         if (appIdMatch && appIdMatch[1]) {
             let appId = appIdMatch[1]
-            const status = '0' // 0: 未加入| 1: 已加入
-            const CACHE_APP_ID = `${appId}#${status}`
-            if (!APP_IDS.includes(CACHE_APP_ID)) {
-                APP_IDS.push(CACHE_APP_ID)
-                $.setdata(APP_IDS.join(','), 'tf_app_ids')
-                $.msg($.name, '应用参数获取成功', `已捕获并存储应用ID: ${appId}`)
-            } else {
-                $.msg($.name, '', `应用ID: ${appId} 已存在，无需重复添加。`)
-            }
+            handler(appId)
         } else {
             $.log('未捕获到有效的𝐓𝐞𝐬𝐭𝐅𝐥𝐢𝐠𝐡𝐭 APP_ID')
         }
+    } else if (/v3\/accounts\/.*\/ru/.test(url)) {
+        const reg = /v3\/accounts\/.*\/ru\/(.*)/g
+        const appId = reg.exec(url)[1]
+        handler(appId)
     }
 }
 // 检查TF应用
