@@ -692,7 +692,8 @@
         "JSEncrypt.js",
         "cheerio.js",
         "Buffer.js",
-        "xmldom.js"
+        "xmldom.js",
+        "moment.js"
       ],
       "settings": [
         {
@@ -734,6 +735,14 @@
           "type": "textarea",
           "rows": 5,
           "desc": ""
+        },
+        {
+          "id": "moment.js",
+          "name": "moment",
+          "val": null,
+          "type": "textarea",
+          "rows": 5,
+          "desc": ""
         }
       ],
       "author": "@yuheng",
@@ -741,6 +750,82 @@
       "icons": [
         "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0d/31/0b/0d310b25-aa91-99c5-b23b-af1e8753c4d0/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/144x144.png",
         "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0d/31/0b/0d310b25-aa91-99c5-b23b-af1e8753c4d0/AppIcon-0-1x_U007emarketing-0-7-0-85-220.png/144x144.png"
+      ],
+      "script": ""
+    },
+    {
+      "id": "yuheng.testflight.autoJoin",
+      "name": "TestFlight公测自动加入",
+      "descs_html": [
+        "<p style='margin-left:20px;color:#3498db;'>@mutu佬授权后修改脚本适配其他代理工具</p>",
+        "<a style='margin-left:20px;color:#ff0000;' target='_blank' href='https://raw.githubusercontent.com/githubdulong/Script/master/Auto_join_TF.js'>原脚本</a>"
+      ],
+      "keys": [
+        "tf_key",
+        "tf_session_id",
+        "tf_session_digest",
+        "tf_request_id",
+        "tf_app_ids",
+        "tf_loon_count",
+        "tf_interval"
+      ],
+      "settings": [
+        {
+          "id": "tf_app_ids",
+          "name": "监控的应用ID",
+          "val": null,
+          "type": "textarea",
+          "rows":5,
+          "desc": "#后代表加入的状态, 0为未加入, 1为已加入"
+        },
+        {
+          "id": "tf_loon_count",
+          "name": "并发数",
+          "val": 1,
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "tf_interval",
+          "name": "间隔时间(单位: 秒)",
+          "val": 0,
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "tf_key",
+          "name": "key",
+          "val": null,
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "tf_session_id",
+          "name": "session_id",
+          "val": null,
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "tf_session_digest",
+          "name": "session_digest",
+          "val": null,
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "tf_request_id",
+          "name": "request_id",
+          "val": null,
+          "type": "text",
+          "desc": ""
+        }
+      ],
+      "author": "@yuheng",
+      "repo": "https://github.com/Yuheng0101/X",
+      "icons": [
+        "https://raw.githubusercontent.com/githubdulong/Script/master/Images/testflight.png",
+        "https://raw.githubusercontent.com/githubdulong/Script/master/Images/testflight.png"
       ],
       "script": ""
     }
