@@ -98,7 +98,7 @@ const getParams = () => {
             $.log('未捕获到有效的𝐓𝐞𝐬𝐭𝐅𝐥𝐢𝐠𝐡𝐭 APP_ID')
         }
     } else if (/v3\/accounts\/.*\/ru/.test(url)) {
-        const reg = /v3\/accounts\/.*\/ru\/(.*)/g
+        const reg = /v3\/accounts\/.*\/ru\/(.*[^\/accept])/
         const appId = reg.exec(url)[1]
         handler(appId)
     }
