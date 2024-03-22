@@ -86,18 +86,27 @@
       ],
       "keys": [
         "xiaomi_step_debug",
+        "xiaomi_step_increment_mode",
         "xiaomi_step_username",
         "xiaomi_step_password",
         "xiaomi_step_space",
-        "xiaomi_step_step"
+        "xiaomi_step_step",
+        "xiaomi_step_increment_cache_list"
       ],
       "settings": [
         {
           "id": "xiaomi_step_debug",
-          "name": "是否输出日志",
+          "name": "是否开启调试模式",
           "val": false,
           "type": "boolean",
           "desc": ""
+        },
+        {
+          "id": "xiaomi_step_debug",
+          "name": "是否开启递增模式",
+          "val": false,
+          "type": "boolean",
+          "desc": "开启后建议把步数(区间)设置较之前小一些"
         },
         {
           "id": "xiaomi_step_username",
