@@ -102,7 +102,7 @@
           "desc": ""
         },
         {
-          "id": "xiaomi_step_debug",
+          "id": "xiaomi_step_increment_mode",
           "name": "是否开启递增模式",
           "val": false,
           "type": "boolean",
