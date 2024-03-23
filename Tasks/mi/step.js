@@ -95,7 +95,7 @@ const useSpace = step ? false : true // 是否使用区间
             if (cache) {
                 const { step: cacheStep } = cache
                 is_debug && $.log(`[${user}] 执行前步数: ${cacheStep}`)
-                $.step = cacheStep + _step
+                $.step = Number(cacheStep) + Number(_step)
                 is_debug && $.log(`[${user}] 待处理步数: ${_step}, 处理后步数: ${$.step}`)
             } else {
                 is_debug && $.log(`[${user}] 今日首次刷步, 步数: ${_step}`)
