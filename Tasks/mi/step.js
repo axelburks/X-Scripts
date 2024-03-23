@@ -8,6 +8,9 @@
 ******************************************
 ## 更新日志
 
+### 20240323
+    更改递增模式机制
+
 ### 20240322
     增加递增模式
 
@@ -36,6 +39,7 @@
 ```
 ******************************************/
 const $ = new Env('小米刷步')
+typeof require !== 'undefined' && require('dotenv').config()
 $.message = []
 $.isTrue = (val) => val === 'true' || val === true
 // prettier-ignore
@@ -43,15 +47,17 @@ $.qs = {parse(ele,con_1,con_2){con_1=con_1||"&",con_2=con_2||"=";for(var temp=el
 const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 const ObjectKeys2LowerCase = (obj) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v]))
 // ----------------------------------------
+const is_debug = $.isTrue($.isNode() ? process.env.XIAOMI_STEP_DEBUG : $.getdata('xiaomi_step_debug')) || true // 是否调试状态
 // 配置参数
-const is_debug = $.isTrue($.isNode() ? process.env.XIAOMI_STEP_DEBUG : $.getdata('xiaomi_step_debug')) // 是否调试状态
 const enable_increment_mode = $.isTrue($.isNode() ? process.env.XIAOMI_STEP_INCREMENT_MODE : $.getdata('xiaomi_step_increment_mode')) // 是否开启增量模式
+const run_count = $.isNode() ? process.env.XIAOMI_STEP_RUN_COUNT : $.getdata('xiaomi_step_run_count') || 1 // 运行次数 => 这里需要配合cron进行使用|cron运行几次，填几次
 const usernames = ($.isNode() ? process.env.XIAOMI_STEP_USERNAME : $.getdata('xiaomi_step_username')) || '' // 使用&&分割多账号
 const passwords = ($.isNode() ? process.env.XIAOMI_STEP_PASSWORD : $.getdata('xiaomi_step_password')) || '' // 同上
 const space = ($.isNode() ? process.env.XIAOMI_STEP_SPACE : $.getdata('xiaomi_step_space')) || '10000-19999' // 区间: 使用-分隔使用&进行分割，如果存在&则匹配每个账号
 const step = ($.isNode() ? process.env.XIAOMI_STEP_STEP : $.getdata('xiaomi_step_step')) || '' // 步数: 0/空为随机 // 使用&分割多账号, 不填使用随机区间
 var increment_list = $.toObj($.getdata(`xiaomi_step_increment_cache_list`) || '[]') // 增量缓存
 const useSpace = step ? false : true // 是否使用区间
+const logger = createLogger(is_debug)
 // ----------------------------------------
 // 执行
 !(async () => {
@@ -63,7 +69,7 @@ const useSpace = step ? false : true // 是否使用区间
     if (userArr.length !== pwdArr.length) throw new Error('❌账号和密码数量不匹配, 请检查')
     if (spaceArr.length > 1 && spaceArr.length !== userArr.length) throw new Error('❌区间数量不匹配, 请检查')
     if (stepArr.length > 1 && stepArr.length !== userArr.length) throw new Error('❌步数数量不匹配, 请检查')
-    $.log(`用户开启${enable_increment_mode ? '递增' : '常规'}模式`)
+    logger.info(`用户开启${enable_increment_mode ? '递增' : '常规'}模式`)
     for (let i = 0; i < userArr.length; i++) {
         // 单账号开启递增模式 => cron多次对常规模式的账号不合适
         // const [
@@ -81,56 +87,92 @@ const useSpace = step ? false : true // 是否使用区间
         const userType = username.includes('@') ? 'email' : 'phone'
         const user = userType === 'phone' ? username.slice(0, 3) + '****' + username.slice(-4) : username.slice(0, 2) + '****' + username.slice(username.indexOf('@'))
         const range = spaceArr.length > 1 ? spaceArr[i] : space
-        const _step = useSpace ? random(...range.split('-').map((i) => parseInt(i))) : stepArr.length > 1 ? stepArr[i] : step
-        is_debug && $.log(`[${user}] 修改步数: ${_step}`)
+        const maxStep = useSpace ? random(...range.split('-').map((i) => parseInt(i))) : stepArr.length > 1 ? stepArr[i] : step
         const startTime = $.time('yyyy-MM-dd HH:mm:ss', Date.now())
-        is_debug && $.log(`[${user}] 执行时间: ${startTime}`)
+        logger.debug(`[${user}] 执行时间: ${startTime}`)
         const sec = random(1000, 2000)
-        is_debug && i !== 0 && $.log(`[${user}] 随机等待${sec}毫秒`)
+        i !== 0 && logger.debug(`[${user}] 随机等待${sec}毫秒`)
         i !== 0 && (await $.wait(sec))
-        // 开启递增模式 => 缓存处理
+        /**
+         * 递增模式
+         * 1. 递增模式下, 用户配置的步数为最大步数
+         * 2. 递增模式下, 用户配置的次数为总次数
+         * 3. 递增模式下, 用户配置的区间为最大步数区间
+         */
         if (enable_increment_mode) {
             const id = `${username}_${$.time('yyyyMMdd')}`
-            const cache = increment_list.find((i) => i.id === id)
-            if (cache) {
-                const { step: cacheStep } = cache
-                is_debug && $.log(`[${user}] 执行前步数: ${cacheStep}`)
-                $.step = Number(cacheStep) + Number(_step)
-                is_debug && $.log(`[${user}] 待处理步数: ${_step}, 处理后步数: ${$.step}`)
-            } else {
-                is_debug && $.log(`[${user}] 今日首次刷步, 步数: ${_step}`)
-                $.step = _step
+            $.cacheIndex = increment_list.findIndex((i) => i.id === id)
+            if ($.cacheIndex == -1) {
+                // 回收缓存
+                increment_list = increment_list.filter((i) => i.id.split('_')[0] !== username)
+                // 生成今日步数数组
+                const randoms = getRandomSteps(maxStep)
+                logger.debug(`[${user}] 生成的随机步数值: ${randoms}`)
+                increment_list.push({ id, steps: randoms.map((step) => ({ step, finished: false })), maxStep })
+                logger.debug('缓存数组', increment_list)
+                $.setdata($.toStr(increment_list), 'xiaomi_step_increment_cache_list')
+                // 重新获取下标
+                $.cacheIndex = increment_list.findIndex((i) => i.id === id)
             }
-            const sameUserList = increment_list.filter((i) => i.id.includes(username)) // 辣鸡回收
-            const sameUser = sameUserList.find((i) => i.id === id)
-            sameUser ? (sameUser.step = $.step) : increment_list.push({ id, step: $.step })
-            sameUserList.forEach((i) => i.id !== id && increment_list.splice(increment_list.indexOf(i), 1))
-            $.setdata($.toStr(increment_list), 'xiaomi_step_increment_cache_list')
-            is_debug && $.log(`[${user}] 缓存: ${$.toStr(increment_list)}`)
+            if (increment_list.find((i) => i.id === id).steps.every((i) => i.finished)) {
+                logger.error(`[${user}] 今日步数已完成, 无需继续执行`)
+                continue
+            }
+            $.currentRunIndex = increment_list.find((i) => i.id === id).steps.findIndex((i) => !i.finished)
+            // 当前需要执行的步数
+            $.step = increment_list.find((i) => i.id === id).steps[$.currentRunIndex].step
+            logger.debug(
+                `[${user}]`,
+                `当前执行步数: ${$.step}步`,
+                `需要执行总步数: ${increment_list[$.cacheIndex].maxStep}步`,
+                `当前次数: ${$.currentRunIndex + 1}`,
+                `需要运行总次数: ${run_count}`
+            )
+        } else {
+            $.step = maxStep
+            logger.debug(`[${user}] 修改步数: ${$.step}`)
         }
         try {
-            var xiaomi = new Xiaomi(username, password, _step, userType)
+            var xiaomi = new Xiaomi(username, password, $.step, userType)
             var code = await xiaomi.getCode()
             var { loginToken, userId } = await xiaomi.doLogin(code)
             var appToken = await xiaomi.getAppToken(loginToken)
             await xiaomi.doStep(appToken, userId)
         } catch (e) {
             await SendNotify($.name, '', `❌账号: ${user} 任务执行失败, 请打开调试模式查看日志!`)
-            $.log(`[${user}] 执行失败: ${e}`)
+            logger.error(`[${user}] 执行失败`, e)
             continue
         }
         $.message.push(`登陆账号: ${user}`)
-        $.message.push(`选择模式: ${enable_increment_mode ? '递增' : '常规'}`)
-        useSpace && $.message.push(`${enable_increment_mode ? '递增' : '设置'}区间: ${spaceArr.length > 1 ? spaceArr[i] : space}`)
+        $.message.push(`当前模式: ${enable_increment_mode ? '递增' : '常规'}`)
+        useSpace && $.message.push(`设置区间: ${spaceArr.length > 1 ? spaceArr[i] : space}`)
         $.message.push(`运行时间: ${startTime}`)
-        $.message.push(`执行结果: 成功修改步数${_step}步`)
-        enable_increment_mode && $.message.push(`累计步数: ${$.step}步`)
+        if (enable_increment_mode) {
+            increment_list[$.cacheIndex].steps[$.currentRunIndex].finished = true
+            logger.debug('执行完成', increment_list)
+            let content = `执行结果: 成功修改步数${$.step}步`
+            $.setdata($.toStr(increment_list), 'xiaomi_step_increment_cache_list')
+            if ($.currentRunIndex === increment_list[$.cacheIndex].steps.length - 1) {
+                logger.debug(`[${user}] 今日步数已完成, 总合计执行:${increment_list[$.cacheIndex].maxStep}步`)
+                content += `, 任务完成`
+            } else {
+                const index = $.currentRunIndex + 1
+                const nextStep = increment_list[$.cacheIndex].steps[index].step
+                logger.debug(`[${user}] 下次执行步数: ${nextStep}, 总合计执行: ${increment_list[$.cacheIndex].maxStep}步`)
+                content += `, 还剩${increment_list[$.cacheIndex].maxStep - $.step}步需要执行`
+            }
+            $.message.push(content)
+        } else {
+            $.message.push(`执行结果: 成功修改步数${$.step}步`)
+        }
+        logger.debug(`[${user}] 执行完成`)
+        $.msg($.name, '', $.message.join('\n').replace(/\n$/, ''))
         await SendNotify($.name, '', $.message.join('\n').replace(/\n$/, ''))
-        is_debug && $.log(`[${user}] 执行完成`)
+        logger.debug(`[${user}] 执行完成`)
         $.message = []
     }
 })()
-    .catch((e) => $.log('', `❗️${$.name}, 错误!`, e))
+    .catch((e) => logger.error(`执行异常: ${e}`))
     .finally(() => $.done())
 // ----------------------------------------
 // 工具类
@@ -186,8 +228,7 @@ function Xiaomi(user, pwd, step, userType) {
             const { statusCode, headers } = await fetchData(options)
             if (statusCode >= 300 && statusCode < 400) {
                 const loc = $.isNode() ? headers['location'] : headers['Location']
-                is_debug && $.log('获取重定向链接')
-                is_debug && $.log($.toStr($.qs.parse(loc)))
+                logger.debug('获取重定向链接', $.qs.parse(loc))
                 if (!/access/.test(loc)) throw new Error('获取登录信息失败')
                 const { access } = $.qs.parse(loc)
                 return access
@@ -216,8 +257,7 @@ function Xiaomi(user, pwd, step, userType) {
             }
             try {
                 const data = await fetchData(options)
-                is_debug && $.log('获取登录参数')
-                is_debug && $.log($.toStr(data))
+                logger.debug('获取登录参数', data)
                 const {
                     token_info: { login_token: loginToken, user_id: userId }
                 } = data
@@ -235,8 +275,7 @@ function Xiaomi(user, pwd, step, userType) {
                 }
             }
             const data = await fetchData(options)
-            is_debug && $.log('获取appToken参数')
-            is_debug && $.log($.toStr(data))
+            logger.debug('获取appToken参数', data)
             const { result, token_info } = data
             if (result === 'ok') {
                 var { app_token: appToken } = token_info
@@ -270,8 +309,7 @@ function Xiaomi(user, pwd, step, userType) {
             }
             try {
                 const { code, message } = await fetchData(options)
-                is_debug && $.log('刷步结果')
-                is_debug && $.log($.toStr({ code, message }))
+                logger.debug('刷步结果', { code, message })
                 if (code == 1) {
                     return true
                 } else {
@@ -283,6 +321,23 @@ function Xiaomi(user, pwd, step, userType) {
         }
     })(user, pwd)
 }
+
+/**
+ * 根据最大步数和次数进行随机步数划分
+ * @param {*} maxStep 最大步数
+ * @param {*} length 次数/数组长度
+ * @returns {Array}
+ */
+function getRandomSteps(maxValue, length = run_count) {
+    const increment = maxValue / length
+    const result = []
+    for (let i = 1; i <= length; i++) {
+        result.push(Math.round(increment * i))
+    }
+    return result
+}
+// prettier-ignore
+function createLogger(t){return new class{constructor(t){this.isDebug=t,this.logs=[]}getVarType(t){return Object.prototype.toString.call(t).slice(8,-1).toLowerCase()}formatter(t){const e=this.getVarType(t);switch(e){case"string":case"number":case"boolean":return t;case"array":case"object":return JSON.stringify(t);default:return String(t)}}log(t,...e){const r=e.map(t=>this.formatter(t)).join("\n");this.logs.push(r),console.log(t+"\n"+r)}info(...t){this.log("----------ℹ️INFO-----------",...t)}debug(...t){this.isDebug&&this.log("----------🛠️DEBUG----------",...t)}warn(...t){this.log("==========⚠️WARN===========",...t)}error(...t){this.log("**********❌ERROR**********",...t)}}(t)}
 // prettier-ignore
 async function fetchData(e){if("string"==typeof e&&(e={url:e}),!e?.url)throw new Error("[发送请求] 缺少 url 参数");try{const{url:t,type:o,headers:r,body:s,params:i,dataType:a="form",deviceType:n="mobile",resultType:p="data"}=e,c=o?o.toLowerCase():"get",l=t.concat("post"===c?"?"+$.qs.stringify(i):""),u=ObjectKeys2LowerCase(r||{});u?.["user-agent"]||Object.assign(u,{"user-agent":"pc"===n?"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"}),"json"===a&&Object.assign(u,{"content-type":"application/json;charset=UTF-8"});const y=e?.timeout?$.isSurge()?e.timeout/1e3:e.timeout:5e3,m="post"===c&&s&&(("json"===e.dataType?$.toStr:$.qs.stringify)("object"==typeof s?s:"")||s),b={...e,...e?.ops?e.opts:{},url:l,headers:u,..."post"===c&&{body:m},..."get"===c&&i&&{params:i},timeout:y},g=new Promise(((e,t)=>{$[c](b,((o,r,s)=>{o?t(o):e("response"===p?r:$.toObj(s)||s)}))}));return $.isQuanX()?await Promise.race([new Promise(((e,t)=>setTimeout((()=>t(new Error("网络开小差了~"))),y))),g]):g}catch(e){throw new Error(e)}}
 // prettier-ignore

@@ -87,6 +87,7 @@
       "keys": [
         "xiaomi_step_debug",
         "xiaomi_step_increment_mode",
+        "xiaomi_step_run_count",
         "xiaomi_step_username",
         "xiaomi_step_password",
         "xiaomi_step_space",
@@ -107,6 +108,13 @@
           "val": false,
           "type": "boolean",
           "desc": "开启后建议把步数(区间)设置较之前小一些"
+        },
+        {
+          "id": "xiaomi_step_run_count",
+          "name": "递增次数(请根据contab次数配置)",
+          "val": "1",
+          "type": "text",
+          "desc": "如:cron设置0 10,8 * * *(每天运行两次),这里请填2"
         },
         {
           "id": "xiaomi_step_username",
@@ -784,7 +792,7 @@
           "name": "监控的应用ID",
           "val": null,
           "type": "textarea",
-          "rows":5,
+          "rows": 5,
           "desc": "#后代表加入的状态, 0为未加入, 1为已加入"
         },
         {
