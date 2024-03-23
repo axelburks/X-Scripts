@@ -166,7 +166,6 @@ const logger = createLogger(is_debug)
             $.message.push(`执行结果: 成功修改步数${$.step}步`)
         }
         logger.debug(`[${user}] 执行完成`)
-        $.msg($.name, '', $.message.join('\n').replace(/\n$/, ''))
         await SendNotify($.name, '', $.message.join('\n').replace(/\n$/, ''))
         logger.debug(`[${user}] 执行完成`)
         $.message = []
