@@ -17,15 +17,12 @@
 
 [青青草视频](https://04ee77a.com/?code=tj0qo4PX)
 
-# 调试区
-#^https?:\/\/qqcapi.*.com\/api\/(v2\/bootstrap|promo\/popup|(task_ad|module)\/list|operation\/ads|user\/read|investment|ad\/ad_position_config|bottom_nav|navs\/top|rich_new\/index|user\/privilege|v3\/shortvideo\/view\/\d+) url script-response-body http://192.168.68.173:5501/VIP/Scripts/qqc/source/qqc.js
-
 # 去广告
-^https?:\/\/qqcapi.*.com\/api\/(promo\/popup|task_ad\/list|operation\/ads|investment|ad\/ad_position_config) url reject-200
+^https?:\/\/((qqcapi|new).*|www.(nj5byj6j|xcz7prgc|um7qjmuv|3hd9uat9)).com\/api\/(promo\/popup|task_ad\/list|operation\/ads|investment|ad\/ad_position_config) url reject-200
 # 重写
-^https?:\/\/qqcapi.*.com\/api\/(v2\/bootstrap|module\/list|user\/read|bottom_nav|navs\/top|rich_new\/index|user\/privilege|v3\/shortvideo\/view\/\d+) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/qqc.js
+^https?:\/\/((qqcapi|new).*|www.(nj5byj6j|xcz7prgc|um7qjmuv|3hd9uat9)).com\/api\/(v2\/bootstrap|module\/list|user\/read|bottom_nav|navs\/top|rich_new\/index|user\/privilege|v3\/shortvideo\/view\/\d+) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/qqc.js
 
-hostname = qqcapi.*.com
+hostname = qqcapi.*.com, www.nj5byj6j.com, new.4dcb5cb.com, www.xcz7prgc.com, www.um7qjmuv.com, www.3hd9uat9.com
 
 ******************************************/
 
