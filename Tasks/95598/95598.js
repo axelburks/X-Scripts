@@ -150,7 +150,7 @@ async function getNotceAndShow() {
     $.log('', '==============📣免责声明📣==============', noticeArr.join('\n'))
 }
 // prettier-ignore
-async function showMsg(n,o,s,i){if($.isNode()){const e=[s];i?.["open-url"]&&e.push(`🔗打开链接: ${i["open-url"]}`),i?.["media-url"]&&e.push(`🎬媒体链接: ${i["media-url"]}`),$.log(n,o,e.join("\n"));try{await $.notify.sendNotify(`${n}\n${o}`,e.join("\n"))}catch(n){$.warn("没有找到sendNotify.js文件 不发送通知")}}else $.msg(n,o,s,i)}
+async function showMsg(n,o,s,i){if($.isNode()){const e=[s];i?.["open-url"]&&e.push(`🔗打开链接: ${i["open-url"]}`),i?.["media-url"]&&e.push(`🎬媒体链接: ${i["media-url"]}`),$.log(n,o,e.join("\n"));try{await notify.sendNotify(`${n}\n${o}`,e.join("\n"))}catch(n){$.warn("没有找到sendNotify.js文件 不发送通知")}}else $.msg(n,o,s,i)}
 // prettier-ignore
 function fetchData(t){const e=t.hasOwnProperty("method")?t.method.toLocaleLowerCase():"get";if($.isNode()&&t.hasOwnProperty("use_proxy")&&t.use_proxy){require("dotenv").config();const e=process.env.PROXY_HOST||"127.0.0.1",s=process.env.PROXY_PORT||7890,o=require("tunnel"),r={https:o.httpsOverHttp({proxy:{host:e,port:1*s}})};Object.assign(t,{agent:r})}return new Promise(async(s,o)=>{const r=await EncryptReq(t);switch(t.url){case"/api/oauth2/oauth/authorize":Object.assign(r,{body:r.body.replace(/^\"|\"$/g,"")})}$.http[e](r).then(async e=>{var o=e.body;try{o=JSON.parse(o)}catch(t){}const c={config:{...t},data:o};switch(t.url){case"/api/oauth2/outer/c02/f02":Object.assign(c.config,{headers:{encryptKey:r.encryptKey}})}const a=await DecrtyptResp(c);s(a)}).catch(t=>o(t))})}
 // ------------------------------------------------------
