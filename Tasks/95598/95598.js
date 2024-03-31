@@ -3,8 +3,8 @@
  * @channel https://t.me/yqc_123/
  * @feedback https://t.me/yqc_777/
  * @author 𝒀𝒖𝒉𝒆𝒏𝒈
- * @update 20240330
- * @version 1.2.0
+ * @update 20240331
+ * @version 1.2.1
  *****************************************
 脚本声明:
 1. 本脚本仅用于学习研究，禁止用于商业用途
@@ -32,8 +32,6 @@ const MY_SERVER = 'https://free.yuhengy17.me' // 感谢tg群友@woxihuanniya提�
 // ------------------------------------------------------
 // 处理boxjs存入的'true'|'false'
 $.isTrue = (val) => val === 'true' || val === true
-// 副标题
-$.subTitle = []
 // 通知列表
 $.message = []
 // KEYCODE/PUBLICKEY
@@ -105,7 +103,7 @@ const NOTIFY_TYPE = $.isTrue($.isNode() ? process.env.WSGW_NOTIFY_TYPE : $.getda
             consName_dst, // 脱敏主户名
             consNo_dst // 用电户号
         } = $.bindInfo.powerUserList[i]
-        totalPq && $.subTitle.push(`本期电量: ${totalPq}度${sumMoney ? `  账户余额: ${sumMoney}元` : ''}`)
+        totalPq && $.message.push(`本期电量: ${totalPq}度${sumMoney ? `  账户余额: ${sumMoney}元` : ''}`)
         date && $.message.push(`截至日期: ${date}`)
         prepayBal && $.message.push(`预存电费: ${prepayBal}元`)
         dayNum && $.message.push(`预计可用: ${dayNum}天`)
@@ -124,7 +122,7 @@ const NOTIFY_TYPE = $.isTrue($.isNode() ? process.env.WSGW_NOTIFY_TYPE : $.getda
                 })
             }
         }
-        await showMsg($.name, $.subTitle.join(''), $.message.join('\n').replace(/\n$/, ''))
+        await showMsg($.name, '', $.message.join('\n').replace(/\n$/, ''))
         ;($.subTitle = []), ($.message = [])
     }
 })()
@@ -134,7 +132,6 @@ const NOTIFY_TYPE = $.isTrue($.isNode() ? process.env.WSGW_NOTIFY_TYPE : $.getda
 // prettier-ignore
 function WSGW(){return new class{async getCode(){$.log("⏳ 获取keyCode和publicKey...");try{const e={url:"/api/oauth2/outer/c02/f02",method:"post",headers:{}},t=await fetchData(e);if(!t?.keyCode||!t?.publicKey)throw"获取KeyCode/PublicKey失败";$.requestCyu=await fetchData(e),$.log("✔️ 获取keyCode和publicKey成功"),$.debug(`🔑 KeyCode: ${$.requestCyu.keyCode}`,`🔑 PublicKey: ${$.requestCyu.publicKey}`)}catch(e){throw`: ${e}`}finally{$.log("🔚 获取keyCode和publicKey结束")}}async refreshToken(){const{code:e,loginKey:t}=await this.getVerifyCode();await this.doLogin(t,e)}async getVerifyCode(){$.log("⏳ 获取验证码...");try{const e={url:"/api/osg-web0004/open/c44/f05",method:"post",data:{password:PASSWORD,account:USERNAME,canvasHeight:200,canvasWidth:310},headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey}},t=await fetchData(e),{canvasSrc:o,ticket:r}=t;if(r){console.log(r),$.log("✔️ 获取滑块成功"),$.debug(`🔑 LoginKey: ${r}`);const e=await this.recognizeCode(o);return $.log("✔️ 识别验证码成功"),$.debug(`🔑 验证码: ${e}`),{code:e,loginKey:r}}console.log(t)}catch(e){throw"获取验证码失败"}finally{$.log("🔚 获取验证码结束")}}async recognizeCode(e){$.log("⏳ 识别验证码...");try{const t=await $.http.post({url:MY_SERVER+"/api/get_x",headers:{"Content-Type":"application/json"},body:JSON.stringify({yuheng:e})}),{data:o}=JSON.parse(t.body);return o}catch(e){throw"识别验证码失败, 请重试!"}finally{$.log("🔚 识别验证码结束")}}async doLogin(e,t){$.log("⏳ 登录中...");try{const o={url:"/api/osg-web0004/open/c44/f06",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey},data:{loginKey:e,code:t,params:{uscInfo:{devciceIp:"",tenant:"state_grid",member:"0902",devciceId:""},quInfo:{optSys:"android",pushId:"000000",addressProvince:"110100",password:PASSWORD,addressRegion:"110101",account:USERNAME,addressCity:"330100"}},Channels:"web"}},{bizrt:r}=await fetchData(o);if(!(r?.userInfo?.length>0))throw"获取用户信息失败, 请检查!";$.setdata($.toStr(r),"95598_bizrt"),$.requestBizrt=r,$.log("✔️ 登录成功"),$.debug(`🔑 用户凭证: ${$.requestBizrt.token}`,`👤 用户信息: ${$.toStr($.requestBizrt.userInfo[0].loginAccount)}`)}catch(e){if(/验证错误/.test(e))return console.log(`滑块验证出错, 重新登录: ${e}`),await this.refreshToken();throw"登录失败"}finally{$.log("🔚 登录结束")}}async getAuthcode(){$.log("⏳ 获取授权码...");try{const e={url:"/api/oauth2/oauth/authorize",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token}},{redirect_url:t}=await fetchData(e);$.authorizeCode=t.split("?code=")[1],$.log("✔️ 获取授权码成功"),$.debug(`🔑 授权码: ${$.authorizeCode}`)}catch(e){throw"获取授权码失败"}finally{$.log("🔚 获取授权码结束")}}async getAccessToken(){$.log("⏳ 获取凭证...");try{const e={url:"/api/oauth2/outer/getWebToken",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token,authorizecode:$.authorizeCode}};$.requestToken=await fetchData(e),$.log("✔️ 获取凭证成功"),$.debug(`🔑 AccessToken: ${$.requestToken.access_token}`)}catch(e){throw"获取凭证失败"}finally{$.log("🔚 获取凭证结束")}}async refreshAccessToken(){await this.getAuthcode(),await this.getAccessToken()}async verifyBind(){$.log("⏳ 验证绑定...");try{const e={url:"/api/osg-open-uc0001/member/c8/f72",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token,acctoken:$.requestToken.access_token},data:{uscInfo:{tenant:"state_grid",member:"0902",devciceId:"",devciceIp:""},quInfo:{token:$.requestBizrt.token,userId:$.requestBizrt.userInfo[0].userId,fileId:$.requestBizrt.userInfo[0].photo}}};await fetchData(e);$.log("✔️ 验证绑定成功")}catch(e){throw"验证绑定失败"}finally{$.log("🔚 验证绑定结束")}}async getBindInfo(){$.log("⏳ 查询绑定信息...");try{await this.verifyBind();const e={url:"/api/osg-open-uc0001/member/c9/f02",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token,acctoken:$.requestToken.access_token},data:{serviceCode:"01010049",source:"0902",target:"-1",uscInfo:{member:"0902",devciceIp:"",devciceId:"",tenant:"state_grid"},quInfo:{userId:$.requestBizrt.userInfo[0].userId},token:$.requestBizrt.token,Channels:"web"}},{bizrt:t}=await fetchData(e);$.bindInfo=t,$.setdata($.toStr(t),"95598_bindInfo"),$.log("✔️ 查询绑定信息成功"),$.debug(`🔑 用户绑定信息: ${$.toStr(t)}`)}catch(e){throw e||"查询绑定信息失败"}finally{$.log("🔚 查询绑定信息结束")}}async getElcFee(e){$.log("⏳ 查询电费...");try{const t={url:"/api/osg-open-bc0001/member/c05/f01",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token,acctoken:$.requestToken.access_token},data:{data:{srvCode:"",serialNo:"",channelCode:"0902",funcCode:"WEBA1007200",acctId:$.requestBizrt.userInfo[0].userId,userName:$.requestBizrt.userInfo[0].loginAccount,promotType:"1",promotCode:"1",userAccountId:$.requestBizrt.userInfo[0].userId,list:[{consNoSrc:$.bindInfo.powerUserList[e].consNo_dst,proCode:$.bindInfo.powerUserList[e].proNo,sceneType:$.bindInfo.powerUserList[e].constType,consNo:$.bindInfo.powerUserList[e].consNo,orgNo:$.bindInfo.powerUserList[e].orgNo}]},serviceCode:"0101143",source:"SGAPP",target:$.bindInfo.powerUserList[e].proNo}},{list:o}=await fetchData(t);return $.log("✔️ 查询电费成功"),$.debug(`🔑 电费信息: ${$.toStr(o)}`),o}catch(e){throw"查询电费失败"}}async getRecentElcFee(e){$.log("⏳ 查询近期用电量...");try{const t=$.time("yyyy-MM-dd",(new Date).getTime()-864e5),o=$.time("yyyy-MM-dd",(new Date).getTime()-6048e5),r=$.time("yyyy",(new Date).getTime()),s={url:"/api/osg-web0004/member/c24/f01",method:"post",headers:{keyCode:$.requestCyu.keyCode,publicKey:$.requestCyu.publicKey,token:$.requestBizrt.token,acctoken:$.requestToken.access_token},data:{params1:{serviceCode:{order:"0101154",uploadPic:"0101296",pauseSCode:"0101250",pauseTCode:"0101251",listconsumers:"0101093",messageList:"0101343",submit:"0101003",sbcMsg:"0101210",powercut:"0104514",BkAuth01:"f15",BkAuth02:"f18",BkAuth03:"f02",BkAuth04:"f17",BkAuth05:"f05",BkAuth06:"f16",BkAuth07:"f01",BkAuth08:"f03"},source:"SGAPP",target:"32101",uscInfo:{member:"0902",devciceIp:"",devciceId:"",tenant:"state_grid"},quInfo:{userId:$.requestBizrt.userInfo[0].userId},token:$.requestBizrt.token},params3:{data:{acctId:$.requestBizrt.userInfo[0].userId,consNo:$.bindInfo.powerUserList[e].consNo_dst,consType:"01",endTime:t,orgNo:$.bindInfo.powerUserList[e].orgNo,queryYear:r,proCode:$.bindInfo.powerUserList[e].proNo,serialNo:"",srvCode:"",startTime:o,userName:$.requestBizrt.userInfo[0].loginAccount,funcCode:"WEBALIPAY_01",channelCode:"0902",clearCache:"11",promotCode:"1",promotType:"1"},serviceCode:"BCP_000026",source:"app",target:$.bindInfo.powerUserList[e].proNo},params4:"010103"}},a=await fetchData(s);return $.log("✔️ 查询近期用电量成功"),$.debug(`🔑 近期用电量: ${$.toStr(a)}`),a}catch(e){throw"查询近期用电量失败"}}}}
 // ------------------------------------------------------
-// 免责声明
 // 免责声明
 async function getNotceAndShow() {
     let noticeArr = [
@@ -150,7 +147,7 @@ async function getNotceAndShow() {
     $.log('', '==============📣免责声明📣==============', noticeArr.join('\n'))
 }
 // prettier-ignore
-async function showMsg(n,o,s,i){if($.isNode()){const e=[s];i?.["open-url"]&&e.push(`🔗打开链接: ${i["open-url"]}`),i?.["media-url"]&&e.push(`🎬媒体链接: ${i["media-url"]}`),$.log(n,o,e.join("\n"));try{await notify.sendNotify(`${n}\n${o}`,e.join("\n"))}catch(n){$.warn("没有找到sendNotify.js文件 不发送通知")}}else $.msg(n,o,s,i)}
+async function showMsg(n,o,s,i){if($.isNode()){const e=[s];i?.["open-url"]&&e.push(`🔗打开链接: ${i["open-url"]}`),i?.["media-url"]&&e.push(`🎬媒体链接: ${i["media-url"]}`),$.log(n,o,e.join("\n"));try{await notify.sendNotify(`${n}${o?'\n'+o:''}`,e.join("\n"))}catch(n){$.warn("没有找到sendNotify.js文件 不发送通知")}}else $.msg(n,o,s,i)}
 // prettier-ignore
 function fetchData(t){const e=t.hasOwnProperty("method")?t.method.toLocaleLowerCase():"get";if($.isNode()&&t.hasOwnProperty("use_proxy")&&t.use_proxy){require("dotenv").config();const e=process.env.PROXY_HOST||"127.0.0.1",s=process.env.PROXY_PORT||7890,o=require("tunnel"),r={https:o.httpsOverHttp({proxy:{host:e,port:1*s}})};Object.assign(t,{agent:r})}return new Promise(async(s,o)=>{const r=await EncryptReq(t);switch(t.url){case"/api/oauth2/oauth/authorize":Object.assign(r,{body:r.body.replace(/^\"|\"$/g,"")})}$.http[e](r).then(async e=>{var o=e.body;try{o=JSON.parse(o)}catch(t){}const c={config:{...t},data:o};switch(t.url){case"/api/oauth2/outer/c02/f02":Object.assign(c.config,{headers:{encryptKey:r.encryptKey}})}const a=await DecrtyptResp(c);s(a)}).catch(t=>o(t))})}
 // ------------------------------------------------------
