@@ -112,8 +112,8 @@ const NOTIFY_TYPE = $.isTrue($.isNode() ? process.env.WSGW_NOTIFY_TYPE : $.getda
         elecAddr_dst && $.message.push(`用电地址: ${elecAddr_dst}`)
         // 是否展示近期用电
         if (SHOW_RECENT) {
-            var { sevenEleList, totalPq: totalPQ } = await wsgw.getRecentElcFee(i)
-            if (sevenEleList.length > 0 && totalPq > 0) {
+            var { sevenEleList, totalPq: totalPQ = 0 } = await wsgw.getRecentElcFee(i)
+            if (sevenEleList.length > 0 && totalPQ > 0) {
                 sevenEleList = sevenEleList.filter((item) => item?.thisVPq)
                 if (sevenEleList.length > 6) sevenEleList = sevenEleList.slice(0, 6)
                 $.message.push(`近期用电: ${totalPQ}度 ⚡️`)
