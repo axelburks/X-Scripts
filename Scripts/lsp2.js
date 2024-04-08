@@ -22,13 +22,13 @@
 ******************************************
 
 # 逼哩逼哩
-#^https?:\/\/.+\.(rtuyhtb|yrvguhx|cbsbwr|hxcwqh|nocqvbo)\.c(om|c)\/api\/app/(ping\/config|media\/home|user\/info|media\/play|comics\/detail|post\/list) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
+^https?:\/\/.+\.(rtuyhtb|yrvguhx|cbsbwr|hxcwqh|nocqvbo)\.c(om|c)\/api\/app/(ping\/config|media\/home|user\/info|media\/play|comics\/detail|post\/list) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
 # 麻豆射区
-#^https?:\/\/.+\.(ijcmwzk|saejeuj|bytebwq|qrneryt|dirptev|epn54fk5njw|4bmqesfias9|d4s000ejiic|djsusdjexs4)\.c(om|c)\/api\/app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
+^https?:\/\/.+\.(ijcmwzk|saejeuj|bytebwq|qrneryt|dirptev|epn54fk5njw|4bmqesfias9|d4s000ejiic|djsusdjexs4)\.c(om|c)\/api\/app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
 # 微勃
-#^https?:\/\/.+\.(djqyarm|cmmsjbu|iomaqzd|ledyqrr|oenwfkbaamamdq|irkkykyrabxiej)\.c(om|c)\/api\/app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
+^https?:\/\/.+\.(djqyarm|cmmsjbu|iomaqzd|ledyqrr|oenwfkbaamamdq|irkkykyrabxiej)\.c(om|c)\/api\/app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
 # 快手约炮
-#^https?:\/\/.+\.(rygbfhw|ixhmhua|uwkakpqkdc|keuaosld|zhdffvwsq|zhmsyaenq)\.(c(om|c)|xyz)\/api\/h5app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
+^https?:\/\/.+\.(rygbfhw|ixhmhua|uwkakpqkdc|keuaosld|zhdffvwsq|zhmsyaenq)\.(c(om|c)|xyz)\/api\/h5app\/(ping\/config|media\/(play|homev2|short\/recommend)|user\/info) url script-response-body https://raw.githubusercontent.com/Yuheng0101/X/main/Scripts/lsp2.js
 
 hostname = kheicn.ijcmwzk.cc, ypmnkbb.saejeuj.com, fufxtyc.bytebwq.com, gcyivjc.qrneryt.com, lcbnejx.dirptev.com, dfsgdggg.epn54fk5njw.com, dfhdfhegeryt.djsusdjexs4.com, dfmegdgregr.4bmqesfias9.com, erswgeregr.d4s000ejiic.com, blbl.rtuyhtb.cc,ioeurn.yrvguhx.com,bblmfy.cbsbwr.com,bllmfy.hxcwqh.com,blkdfjg.nocqvbo.com,bfvph.djqyarm.com, tehvh.cmmsjbu.com, czecp.iomaqzd.com, vmbdiwr.ledyqrr.com, djytmeknk.oenwfkbaamamdq.com, hpihsdqcy.irkkykyrabxiej.com, woqasdfe.uwkakpqkdc.com, ifbgkeowq.keuaosld.com, jgtgjf.zhdffvwsq.com, jhbnvd.zhmsyaenq.com, a.ixhmhua.xyz
 
